@@ -62,7 +62,7 @@ const EditableCell = (props) => {
                 <label htmlFor="link">
                   <IconButton
                     color="primary"
-                    size="small"
+                    size="sm"
                     aria-label="Subir archivo"
                     component="span"
                   >

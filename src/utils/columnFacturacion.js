@@ -43,14 +43,14 @@ const getColumnSearchProps = (dataIndex, searchInput) => ({
           type="primary"
           onClick={() => handleSearch(confirm)}
           icon={<SearchOutlined />}
-          size="small"
+          size="sm"
           style={{ width: 90, backgroundColor: "#40a9ff" }}
         >
           Buscar
         </Button>
         <Button
           onClick={() => handleReset(clearFilters)}
-          size="small"
+          size="sm"
           style={{ width: 90 }}
         >
           Limpiar

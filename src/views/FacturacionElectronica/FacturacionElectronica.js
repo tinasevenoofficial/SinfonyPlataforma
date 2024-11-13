@@ -51,8 +51,8 @@ export default function FacturacionElectronica() {
     const [datosFacturas, setDatosFacturas] = useState();
     const [fechaInicialInput, setFechaInicialInput] = useState();
     const [fechaFinalInput, setFechaFinalInput] = useState();
-    const [fechaInicialDefinida, setFechaInicialDefinida] = useState();
-    const [fechaFinalDefinida, setFechaFinalDefinida] = useState();
+    const [fechaInicialDefinida, setFechaInicialDefinida] = useState(null);
+    const [fechaFinalDefinida, setFechaFinalDefinida] = useState(null);
     const [terceroSeleccionado, setTerceroSeleccionado] = useState('');
     const [fechaControlado, setFechaControlado] = useState(1);
     const [estadoDianSeleccionado, setEstadoDianSeleccionado] = useState('vacio');
@@ -510,14 +510,14 @@ export default function FacturacionElectronica() {
                 <br></br>
             </GridContainer>
             <Form form={formEdit} component={false}>
-                <Table
+                {data && data.length &&<Table
                     className={classes.table}
                     components={{
                         body: {
                             cell: EditableCell,
                         },
                     }}
-                    size="small"
+                    size="sm"
                     bordered
                     scroll={{ x: 500 }}
                     dataSource={data}
@@ -540,7 +540,7 @@ export default function FacturacionElectronica() {
                         onChange: cancel,
                         pageSize: 5,
                     }}
-                />
+                />}
             </Form>
         </>
     );
