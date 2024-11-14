@@ -447,14 +447,14 @@ export default function NominaElectronica() {
                 <br></br>
             </GridContainer>
             <Form form={formEdit} component={false}>
-                <Table
+                {data && data.length && <Table
                     className={classes.table}
                     components={{
                         body: {
                             cell: EditableCell,
                         },
                     }}
-                    size="small"
+                    size="sm"
                     bordered
                     scroll={{ x: 500 }}
                     dataSource={data}
@@ -477,7 +477,7 @@ export default function NominaElectronica() {
                         onChange: cancel,
                         pageSize: 5,
                     }}
-                />
+                />}
             </Form>
         </>
     );
