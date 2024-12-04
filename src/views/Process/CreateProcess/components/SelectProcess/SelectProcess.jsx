@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form'
 
 import { useBoolean, useInmutableFetch } from 'hooks'
 import { LoadingButton } from 'components'
-import Formulario from 'views/Components/Digitacion/Formulario'
+//import Formulario from 'views/Components/Digitacion/Formulario'
 
 import { SelectProcessSchema, defaultSelectProcess } from './SelectProcess.schema'
 
@@ -91,7 +91,7 @@ const SelectProcess = ({ nextStep, backStep, id }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          {tramites && <Formulario idDocu={3} />}
+          {/*tramites && <Formulario idDocu={3} />*/}
         </Grid>
         <Grid item>
           <Button disabled={loading} color="secondary" variant="contained" size="small" onClick={backStep}>

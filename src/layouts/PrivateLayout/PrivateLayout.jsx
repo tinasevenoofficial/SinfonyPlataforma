@@ -14,8 +14,6 @@ import Proyecto from 'views/Proyectos/Proyecto'
 import Radicacion from 'views/Radicacion/Radicacion'
 import ChangePassword from 'views/Pages/ChangePassword'
 // import EstadoTramites from 'views/Maps/EstadoTramites'
-import Formulario from 'views/Components/Digitacion/Formulario'
-import vistaPrevia from 'views/Components/CrearArchivo/obtenerHtml'
 import radicacionDetalle from 'views/Radicacion/MisRadicaciones/RadicacionDetalle'
 import styles from 'assets/jss/material-dashboard-pro-react/layouts/adminStyle'
 
@@ -124,14 +122,8 @@ const PrivateLayout = ({ ...rest }) => {
               <div className={classes.container}>
                 <Switch>
                   <Route name="Proyecto" path="/admin/proyecto/:idProyecto" component={Proyecto} />
-                  <Route
-                    name="Mis Radicaciones"
-                    path="/admin/misRadicaciones/:idRadicacion"
-                    component={radicacionDetalle}
-                  />
+                  <Route name="Mis Radicaciones" path="/admin/misRadicaciones/:idRadicacion" component={radicacionDetalle}/>
                   <Route path="/admin/EstadoTramites/:idTramite" component={CreateProcess} />
-                  <Route name="Formulario" path="/admin/Formulario" component={Formulario} />
-                  <Route name="Vista Previa" path="/admin/obtenerHtml" component={vistaPrevia} />
                   <Route name="Cambiar contraseña" path="/admin/change-pwd" component={ChangePassword} />
                   <Route name="Radicaciones" path="/admin/radicacion/:id?/:step?" component={Radicacion} />
                   {getRoutes(routes)}

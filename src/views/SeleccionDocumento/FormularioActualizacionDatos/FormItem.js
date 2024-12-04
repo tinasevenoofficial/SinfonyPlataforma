@@ -41,7 +41,7 @@ const FormItem = ({ index, form, updateForm, removeForm, dataJson }) => {
     const [error, setError] = React.useState(null);
 
     useEffect(() => {
-      handleJsonUpload();
+ 
     },[])
 
     const handleChange = (path, value) => {
@@ -149,29 +149,7 @@ const FormItem = ({ index, form, updateForm, removeForm, dataJson }) => {
         handleChange('minuta.compradores', newCompradores);
     };
 
-    const handleJsonUpload = (event) => {
-        //const file = event.target.files[0];
-        //if (file) {
-            //const reader = new FileReader();
-            //reader.onload = (e) => {
-                try {
-                    const jsonData = dataJson;
-                    // Validar que el JSON tenga la estructura esperada
-                    if (jsonData.minuta) {
-                        updateForm(index, jsonData);
-                        setError(null);
-                    } else {
-                        setError('El JSON no contiene la sección "minuta".');
-                    }
-                } catch (err) {
-                    setError('Error al parsear el archivo JSON. Asegúrate de que el archivo sea válido.');
-                }
-            //};
-            //reader.readAsText(file);
-            // Resetear el input para permitir cargar el mismo archivo nuevamente si es necesario
-            //event.target.value = null;
-        //}
-    };
+   
 
     const triggerFileInput = () => {
         fileInputRef.current.click();
@@ -180,34 +158,7 @@ const FormItem = ({ index, form, updateForm, removeForm, dataJson }) => {
     return (
         <div style={{ border: '1px solid #ddd', padding: '20px', marginBottom: '20px', borderRadius: '5px' }}>
            <Box style={{ marginBottom: '20px' }}>
-                <Grid container justify="space-between" alignItems="center" style={{ marginBottom: '20px' }}>
-                <Typography variant="h4">Formulario #{index + 1}</Typography>
-                <Button
-                    onClick={() => removeForm(index)}
-                    style={{ backgroundColor: '#f8d7da', color: '#721c24' }}
-                >
-                    Eliminar Formulario
-                </Button>
-                </Grid>
-
-                {/* Botón para Cargar JSON */}
-                <Grid container spacing={2} style={{ marginBottom: '20px' }}>
-                <Grid item>
-                    <Button onClick={triggerFileInput}>Cargar JSON</Button>
-                    <input
-                    type="file"
-                    accept=".json"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleJsonUpload}
-                    />
-                </Grid>
-                {error && (
-                    <Grid item xs={12}>
-                    <SweetAlert>{error}</SweetAlert>
-                    </Grid>
-                )}
-                </Grid>
+       
 
                 {/* Notaria Section */}
 

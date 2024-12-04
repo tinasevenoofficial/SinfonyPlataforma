@@ -5,10 +5,9 @@ import RadicacionList from 'views/Radicacion'
 import DepositoList from 'views/Depositos/ListaDepositos/ListDepositos'
 import MisProyectos from 'views/Proyectos/CrearMisProyectos/MisProyectos'
 
-import EditorConvertToJSON from 'views/Components/Digitacion/EditorPlantilla'
-import CrearDocumentoAgil from 'views/Components/Digitacion/CrearDocumentoAgil.js'
-import Documents from 'views/Components/Digitacion/Documents'
-import Plantillas from 'views/Components/Digitacion/Plantillas'
+import CrearDocumentoAgil from 'views/Digitacion/CrearDocumentoAgil.js'
+import Documents from 'views/Digitacion/Documents'
+import Plantillas from 'views/Digitacion/Plantillas'
 
 import SeleccionDocumento from 'views/SeleccionDocumento/SeleccionDocumento.js'
 import AdminUsers from 'views/Usuarios/AdminUsers.js'
@@ -285,20 +284,12 @@ const dashRoutes = [
   // },
   {
     collapse: true,
-    name: 'Digitación',
+    name: 'Documentos Agiles',
     rtlName: 'صفحات',
     icon: RateReview,
     state: 'documentAgilesCollapse',
     permisosView: ['66', '65'],
     views: [
-      {
-        path: '/editortext',
-        name: 'Crear Plantilla',
-        mini: 'CP',
-        component: EditorConvertToJSON,
-        layout: '/admin',
-        permisos: '66',
-      },
       {
         path: '/crearDocumentoAgil',
         name: 'Crear Documento',

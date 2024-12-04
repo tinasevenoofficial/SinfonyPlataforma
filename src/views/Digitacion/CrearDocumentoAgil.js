@@ -27,7 +27,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import CardFooter from "components/Card/CardFooter";
 
 import styles from "assets/jss/material-dashboard-pro-react/views/notificationsStyle.js";
-import useStyles from "../../../assets/jss/material-dashboard-pro-react/views/common";
+import useStyles from "../../assets/jss/material-dashboard-pro-react/views/common";
 
 const useStyles2 = makeStyles((theme) => ({
   root: {

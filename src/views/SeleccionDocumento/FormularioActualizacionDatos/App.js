@@ -1,6 +1,5 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
-import AddFormButton from './AddFormButton';
 import FormList from './FormList';
 import SubmitButton from './SubmitButton';
 import ProgressModal from './ProgressModal';
@@ -22,43 +21,77 @@ function App({dataJson, idPlantilla}) {
   const [downloadUrl, setDownloadUrl] = useState(null);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  // Función para agregar un formulario
-  const addForm = (form) => {
-    setForms([...forms, form]);
-  };
+  const [isFormAdded, setIsFormAdded] = useState(false);  
+  const [projects, setProjects] = useState([]); 
+  const [selectedProject, setSelectedProject] = useState(null); 
+  const [selectedTemplate, setSelectedTemplate] = useState(null); 
+  const [templates, setTemplates] = useState([]); 
 
+  // Fetch projects from API
+  useEffect(() => {
+    axios.get('/api/plantillaDocumentos/proyectos')
+      .then(response => {
+        console.log('Projects fetched:', response.data); 
+        setProjects(response.data); 
+      })
+      .catch(error => {
+        console.error('Error fetching projects:', error);
+        setError('No se pudieron cargar los proyectos.'); 
+      });
+  }, []);
+
+  // Fetch templates when a project is selected
+  useEffect(() => {
+    if (selectedProject) {
+      const project = projects.find(p => p.codigo === selectedProject);
+      if (project) {
+        setTemplates(project.plantilla_documentos); // Set the associated templates
+      }
+    }
+  }, [selectedProject, projects]);
+
+  
+ // Función para agregar un formulario
+ const addForm = () => {
+  if (forms.length === 0) {
+    setForms([...forms, {}]);  // Agregar formulario vacío
+    setIsFormAdded(true);  // Cambiar el estado para indicar que el formulario fue agregado
+  }
+};
   // Función para actualizar un formulario
   const updateForm = (index, form) => {
     setForms(forms.map((f, i) => (i === index ? form : f)));
   };
 
-  // Función para remover un formulario
-  const removeForm = (index) => {
-    setForms(forms.filter((_, i) => i !== index));
+   // Función para remover un formulario
+   const removeForm = () => {
+    setForms([]);  // Eliminar todos los formularios
+    setIsFormAdded(false);  // Cambiar el estado para indicar que no hay formulario
   };
+
 
   // Función para manejar la apertura del modal
   const openModal = () => {
     setIsModalOpen(true);
   };
 
-  // Función para manejar el cierre del modal
-  const closeModal = () => {
+   // Función para manejar el cierre del modal
+   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  // Función para resetear el estado después de la descarga
-  const resetState = () => {
-    setIsLoading(false);
-    setProgress(0);
-    setCurrent('');
-    setMessages([]);
-    setJobId(null);
-    setDownloadUrl(null);
-    setError(null);
-    closeModal();
-  };
+ // Función para resetear el estado después de la descarga
+ const resetState = () => {
+  setIsLoading(false);
+  setProgress(0);
+  setCurrent('');
+  setMessages([]);
+  setJobId(null);
+  setDownloadUrl(null);
+  setError(null);
+  closeModal();
+};
+
 
   // Función para monitorear el estado del trabajo
   useEffect(() => {
@@ -99,88 +132,211 @@ function App({dataJson, idPlantilla}) {
     return () => clearInterval(interval);
   }, [jobId, isLoading]);
 
-  useEffect(()=>{
-    axios.get(EXTERNAL_API_PATHS.plantillaDocumentos+"/"+idPlantilla).then(async responsePlantilla => {
-        const response = await  axios.get(EXTERNAL_API_PATHS.files+`/${responsePlantilla.data.url_documento}`,{ responseType: 'blob'})
-        if (response.status == 200) {
-             // Crear un Blob a partir de la respuesta binaria
-            const blob = new Blob([response.data], { type: response.headers['content-type'] });
-            const fileURL = URL.createObjectURL(blob);
-            setTemplate(response.data)
-            console.log("Plantilla Cargada!")          
-        } else {
-          console.error('Error en la descarga del archivo:', response.statusText);
-        } 
-      }).catch((e) => {
+  useEffect(() => {
+    axios.get(EXTERNAL_API_PATHS.plantillaDocumentos + "/" + idPlantilla).then(async (responsePlantilla) => {
+      const response = await axios.get(EXTERNAL_API_PATHS.files + `/${responsePlantilla.data.url_documento}`, { responseType: 'blob' })
+      if (response.status === 200) {
+        // Crear un Blob a partir de la respuesta binaria
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        const fileURL = URL.createObjectURL(blob);
+        setTemplate(response.data);
+        console.log("Plantilla Cargada!")
+      } else {
+        console.error('Error en la descarga del archivo:', response.statusText);
+      }
+    }).catch((e) => {
       console.log(e)
     });
-   
-  },[])
+  }, []);
 
+  return (
+    <>
+  {/* Project Selection */}
+<div style={{
  
+          borderBottom: '1px solid #ccc',
+  padding: '20px',
+  borderRadius: '8px',
+  marginBottom: '15px',
+}}>
+  {/* Proyectos */}
+  <div style={{ marginBottom: '20px' }}>
+    <label style={{
+      fontSize: '16px',
+      color: '#515354',
+      marginBottom: '8px',
+      marginRight: '4px',
+      display: 'inline-block',
+    }}>Proyectos</label>
+    <select
+      value={selectedProject || ''}
+      onChange={(e) => setSelectedProject(e.target.value)}
+      style={{
+        width: '40%',
+        padding: '8px',
+        fontSize: '14px',
+        border: '1px solid #ccc',
+        borderTop: '1px solid #ccc',
+        color: '#515354',
+        outline: 'none',
+        transition: 'all 0.3s ease',
+        marginRight: '4px',
+      }}
+    >
+      <option value="">Seleccione un proyecto...</option>
+      {projects.map(project => (
+        <option key={project.codigo} value={project.codigo}>
+          {project.proyecto}
+        </option>
+      ))}
+    </select>
+  </div>
 
-  return (<>
-       {/* <p variant="xxLarge">Generador de Documentos</p>
-        <TemplateUploader template={template} setTemplate={setTemplate} />*/}
-        <div style={{ marginBottom: '20px' }}>
-            <Button
-                color="primary"
-                onClick={addForm}
-              >
-                Agregar Formulario
-            </Button>
-        </div>
-        <FormList forms={forms} updateForm={updateForm} removeForm={removeForm} dataJson={dataJson} />
-        <SubmitButton
-          template={template}
-          forms={forms}
-          setIsLoading={setIsLoading}
-          setProgress={setProgress}
-          setCurrent={setCurrent}
-          setMessages={setMessages}
-          setJobId={setJobId}
-          setDownloadUrl={setDownloadUrl}
-          setError={setError}
-          openModal={openModal}
-        />
+  {/* Plantillas */}
+  <div style={{ marginBottom: '8px' }}>
+    <label style={{
+      fontSize: '16px',
+      color: '#515354',
+      marginRight: '8px',
+      display: 'inline-block',
+    }}>Plantillas</label>
+    <select
+      value={selectedTemplate || ''}
+      onChange={(e) => setSelectedTemplate(e.target.value)}
+      style={{
+        width: '40%',
+        padding: '8px',
+        fontSize: '14px',
+        borderRadius: '5px',
+        border: '1px solid #ccc',
+        color: '#515354',
+        outline: 'none',
+        transition: 'all 0.3s ease',
+        marginRight: '4px',
+      }}
+    >
+      <option value="">Seleccione una plantilla...</option>
+      {templates.map(template => (
+        <option key={template.id} value={template.id}>
+          {template.nombre_plantilla}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
-        {/* Modal de Progreso */}
-        <ProgressModal
-          isOpen={isModalOpen}
-          onDismiss={closeModal}
-          progress={progress}
-          current={current}
-          latestMessage={messages[messages.length - 1] || ''}
-          messages={messages}
-        />
 
-        {/* Mensaje de Error */}
-        {error && (
-          <SweetAlert
-            onDismiss={() => setError(null)}
-            dismissButtonAriaLabel="Cerrar"
-          >
-            {error}
-          </SweetAlert>
-        )}
+      <div style={{ marginBottom: '20px', alignItems: 'center' }}>
+        <Button
+          color="primary"
+          onClick={isFormAdded ? removeForm : addForm}  
+        >
+          {isFormAdded ? 'Retirar Formulario' : 'Agregar Formulario'}  
+        </Button>
+      </div>
 
-        {/* Enlace de Descarga */}
-        {downloadUrl && (
-          <SweetAlert
-            onConfirmed={resetState} 
-            isMultiline={false}
-          >
-             <div>
-                <a href={downloadUrl} download="documentos_generados.zip">
-                  <Button text="Descargar Documentos" />
-                </a>
-                <Button text="Resetear" onClick={resetState} />
-              </div>
-            <p>{downloadUrl}</p>
-            Documentos generados exitosamente.
-          </SweetAlert>
-        )}
-        </>
+      {/* REQUIREMENTS
+
+1. First
+      <div style={{ A subtle border should go here }}>
+    here we need a label 'Project' and in front of it an input selector that brings the list of projects from the endpoint.
+
+      This is the endpoint: /api/plantillaDocumentos/proyectos
+
+      the endpoint looks like this: 
+
+      [
+    {
+        "codigo": "010101",
+        "proyecto": "NUQUI",
+        "token": "575757",
+        "usuario_plataforma": "96061016462",
+        "estado": 1,
+        "plantilla_documentos": [
+            {
+                "id": 1,
+                "nombre_plantilla": "Jaramillo Mora - NUQUI",
+                "url_documento": "plantillas_agiles/v2/Jaramillo Mora - NUQUI.docx",
+                "variables": "{\"minuta\": {\"notaria\": {\"nombre_notario\": \"DOCTORA MARÍA PÉREZ\", \"Fecha escritura\": \"03/10/2024\", \"notario_encargado\": \"Sí\"}, \"linderos\": \"Se ubica en el primer piso del CONJUNTO RESIDENCIAL NUQUÍ VIS ETAPA 1, ubicado en la dirección ZZZtext:direccion_inmueble:1ZZZ del Sector Guabinas. Área construida: 70,09 m2. Área privada construida: 62,45 m2. Nadir: +0,00 
+
+                ...
+
+                \"UN MILLÓN DE PESOS MONEDA CORRIENTE\", \"numeros\": \"$1.000.000\"}, \"matricula_inmobiliaria_apto\": \"300100200900\"}}}}",
+                "usuario_plataforma": "d8bdb91d-bed6-4e06-a0b8-086a3604d4a1",
+                "proyecto_codigo": "010101",
+                "proyecto2": {
+                    "codigo": "010101",
+                    "proyecto": "NUQUI",
+                    "token": "575757",
+                    "usuario_plataforma": "96061016462",
+                    "estado": 1
+                }
+            },
+            {
+                "id": 3,
+                "nombre_plantilla": "JaramilloMoraNUQUI2",
+                "url_documento": "plantillas_documentos/JaramilloMoraNUQUI2.docx",
+                "variables": "{\"minuta\": {\"notaria\": {\"nombre_notario\": \"DOCTORA MARÍA PÉREZ\", \"Fecha escritura\": \"03/10/2024\", \"notario_encargado\": \"Sí\"}, \"linderos\": \"Se ubica en el primer piso del CONJUNTO RESIDENCIAL NUQUÍ VIS ETAPA 1, ubicado en la dirección ZZZtext:direccion_inmueble:1ZZZ del Sector Guabinas. Área construida: 70,09 m2. Área privada construida: 62,45 m2. Nadir: +0,00 m. Cenit: --- it's bigger.
+
+2. Second  
+
+ Same as above but with the templates associated with the document.
+
+      </div> */}
+
+
+
+      <FormList forms={forms} updateForm={() => {}} removeForm={() => {}} dataJson={dataJson} />
+      <SubmitButton
+        template={template}
+        forms={forms}
+        setIsLoading={setIsLoading}
+        setProgress={setProgress}
+        setCurrent={setCurrent}
+        setMessages={setMessages}
+        setJobId={setJobId}
+        setDownloadUrl={setDownloadUrl}
+        setError={setError}
+        openModal={openModal}
+      />
+
+      {/* Modal de Progreso */}
+      <ProgressModal
+        isOpen={isModalOpen}
+        onDismiss={closeModal}
+        progress={progress}
+        current={current}
+        latestMessage={messages[messages.length - 1] || ''}
+        messages={messages}
+      />
+
+      {/* Mensaje de Error */}
+      {error && (
+        <SweetAlert
+          onDismiss={() => setError(null)}
+          dismissButtonAriaLabel="Cerrar"
+        >
+          {error}
+        </SweetAlert>
+      )}
+
+      {/* Enlace de Descarga */}
+      {downloadUrl && (
+        <SweetAlert
+          onConfirmed={resetState}
+          isMultiline={false}
+        >
+          <div>
+            <a href={downloadUrl} download="documentos_generados.zip">
+              <Button text="Descargar Documentos" />
+            </a>
+            <Button text="Resetear" onClick={resetState} />
+          </div>
+          <p>{downloadUrl}</p>
+          Documentos generados exitosamente.
+        </SweetAlert>
+      )}
+    </>
   );
 }
 

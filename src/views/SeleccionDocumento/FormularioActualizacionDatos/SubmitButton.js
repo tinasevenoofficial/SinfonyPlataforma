@@ -76,17 +76,8 @@ const SubmitButton = ({
     return (
         <div style={{ marginTop: '20px' }}>
             {/* Botón para Generar Documentos Reales */}
-            <Button onClick={handleRealSubmit} color="info">
-                Generar Documentos
-            </Button>
-
-            {/* Botón para Simular Generación de Documentos */}
-            <Button
-                onClick={handleSimulateSubmit}
-                color="success"
-                style={{ marginLeft: '10px' }}
-            >
-                Generar Documentos Completos
+            <Button onClick={handleRealSubmit} color="success">
+                Generar
             </Button>
         </div>
     );
